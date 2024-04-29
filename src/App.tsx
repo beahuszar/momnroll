@@ -1,11 +1,21 @@
+import { useState } from 'react'
 import './App.css'
-import { fretBoard } from './utils/notes'
+import { Pitch, fretBoard } from './utils/notes'
 
 function App() {
-  const pitch = fretBoard.flat
+  const [currentPitch, setCurrentPitch] = useState<Pitch>('flat')
+  const pitch = fretBoard[currentPitch]
 
   return (
     <>
+      <button
+        onClick={() => {
+          setCurrentPitch(currentPitch === 'flat' ? 'sharp' : 'flat')
+        }}
+        className='bg-orange-950 text-white p-2 rounded-md m-3'
+      >
+        {currentPitch === 'flat' ? 'Váltás föléhangoltra' : 'Váltás aláhangoltra'}
+      </button>
       <div className='h-full w-full flex flex-col justify-center gap-[30px]'>
         <div className='pl-[90px] pr-[15px] h-[50px] w-full flex flex-col justify-around items-center align-middle'>
           <div className='w-full flex flex-row align-middle justify-between'>

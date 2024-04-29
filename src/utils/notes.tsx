@@ -1,4 +1,4 @@
-type Pitch = 'flat' | 'sharp'
+export type Pitch = 'flat' | 'sharp'
 type BassString = 'G' | 'D' | 'A' | 'E'
 interface Note {
   note: 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G'
