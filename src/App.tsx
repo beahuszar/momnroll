@@ -132,9 +132,13 @@ function App() {
               colMiddleCenter,
               {
                 'bg-red-400 hover:bg-red-200':
-                  guess === uniqueNote && guess !== currentRandom?.note.localization,
+                  guess === uniqueNote &&
+                  currentRandom &&
+                  guess !== currentRandom?.note.localization,
                 'bg-green-400 hover:bg-green-200':
-                  guess === uniqueNote && guess === currentRandom?.note.localization
+                  guess === uniqueNote &&
+                  currentRandom &&
+                  guess === currentRandom?.note.localization
               }
             )}
             onClick={() => setGuess(uniqueNote)}
