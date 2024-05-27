@@ -1,3 +1,4 @@
+import cn from 'classnames'
 import { useState } from 'react'
 import './App.css'
 import { Pitch, fretBoard } from './utils/notes'
@@ -19,11 +20,23 @@ function App() {
       <div className='h-full w-full flex flex-col justify-center gap-[30px]'>
         <div className='pl-[90px] pr-[15px] h-[50px] w-full flex flex-col justify-around items-center align-middle'>
           <div className='w-full flex flex-row align-middle justify-between'>
-            {pitch.G.map((_, index) => (
-              <div key={index} className='w-[50px] relative'>
-                <span className='text-black absolute top-0 left-0'>{index + 1}</span>
-              </div>
-            ))}
+            {pitch.G.map((_, index) => {
+              const order = index + 1
+              const positionMarkers = [3, 5, 7, 9, 12, 15, 17, 19]
+              return (
+                <div key={index} className='w-[50px] relative'>
+                  <span
+                    className={cn('text-black text-lg absolute top-0 left-0  w-[30px] h-[30px]', {
+                      'text-white bg-amber-950 rounded-full flex justify-center items-center':
+                        positionMarkers.includes(order),
+                      'bg-violet-400': order === 12
+                    })}
+                  >
+                    {order}
+                  </span>
+                </div>
+              )
+            })}
           </div>
         </div>
         <div className='h-[500px] w-full bg-gradient-to-b from-amber-900 via-amber-700 to-amber-900 relative'>
