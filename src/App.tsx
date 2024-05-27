@@ -6,6 +6,14 @@ import { Pitch, fretBoard } from './utils/notes'
 function App() {
   const [currentPitch, setCurrentPitch] = useState<Pitch>('flat')
   const pitch = fretBoard[currentPitch]
+  const noteIndicatorStyles =
+    'absolute w-[30px] top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%] text-center text-white'
+  const pitchContainerStyles = 'w-full flex flex-row align-middle justify-between'
+  const noteContainerStyles = 'w-[50px] relative'
+  const noteStyles =
+    'text-white absolute top-0 left-0 w-[50px] h-[50px] rounded-full bg-slate-500 flex justify-center items-center text-center'
+  const colMiddleCenter = 'flex flex-col justify-around items-center align-middle'
+  const pinkGradient = 'bg-gradient-to-b from-rose-300 via-rose-400 to-from-rose-300'
 
   return (
     <>
@@ -18,7 +26,7 @@ function App() {
         {currentPitch === 'flat' ? 'Váltás föléhangoltra' : 'Váltás aláhangoltra'}
       </button>
       <div className='h-full w-full flex flex-col justify-center gap-[30px]'>
-        <div className='pl-[90px] pr-[15px] h-[50px] w-full flex flex-col justify-around items-center align-middle'>
+        <div className={cn('pl-[90px] pr-[15px] h-[50px] w-full', colMiddleCenter)}>
           <div className='w-full flex flex-row align-middle justify-between'>
             {pitch.G.map((_, index) => {
               const order = index + 1
@@ -26,11 +34,13 @@ function App() {
               return (
                 <div key={index} className='w-[50px] relative'>
                   <span
-                    className={cn('text-black text-lg absolute top-0 left-0  w-[30px] h-[30px]', {
-                      'text-white bg-amber-950 rounded-full flex justify-center items-center':
-                        positionMarkers.includes(order),
-                      'bg-violet-400': order === 12
-                    })}
+                    className={cn(
+                      'text-black text-lg absolute top-0 left-0 w-[30px] h-[30px] flex justify-center items-center',
+                      {
+                        'text-white bg-amber-950 rounded-full': positionMarkers.includes(order),
+                        'bg-violet-400': order === 12
+                      }
+                    )}
                   >
                     {order}
                   </span>
@@ -40,60 +50,52 @@ function App() {
           </div>
         </div>
         <div className='h-[500px] w-full bg-gradient-to-b from-amber-900 via-amber-700 to-amber-900 relative'>
-          <div className='w-full h-full flex flex-col justify-around items-center align-middle absolute'>
-            <div className='w-full h-[3px] bg-gradient-to-b from-rose-300 via-rose-400 to-from-rose-300'></div>
-            <div className='w-full h-[5px] bg-gradient-to-b from-rose-300 via-rose-400 to-from-rose-300'></div>
-            <div className='w-full h-[7px] bg-gradient-to-b from-rose-300 via-rose-400 to-from-rose-300'></div>
-            <div className='w-full h-[9px] bg-gradient-to-b from-rose-300 via-rose-400 to-from-rose-300'></div>
+          <div className={cn('w-full h-full absolute', colMiddleCenter)}>
+            <div className={cn('w-full h-[3px]', pinkGradient)}></div>
+            <div className={cn('w-full h-[5px]', pinkGradient)}></div>
+            <div className={cn('w-full h-[7px]', pinkGradient)}></div>
+            <div className={cn('w-full h-[9px]', pinkGradient)}></div>
           </div>
-          <div className='bg-slate-700/40 w-[80px] h-full flex flex-col justify-around items-center align-middle absolute'>
+          <div className={cn('bg-slate-700/40 w-[80px] h-full absolute', colMiddleCenter)}>
             <div className='w-full h-[3px] relative'>
-              <span className='absolute w-[30px] top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%] text-center text-white'>
-                G
-              </span>
+              <span className={noteIndicatorStyles}>G</span>
             </div>
             <div className='w-full h-[5px] relative'>
-              <span className='absolute w-[30px] top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%] text-center text-white'>
-                D
-              </span>
+              <span className={noteIndicatorStyles}>D</span>
             </div>
             <div className='w-full h-[7px] relative'>
-              <span className='absolute w-[30px] top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%] text-center text-white'>
-                A
-              </span>
+              <span className={noteIndicatorStyles}>A</span>
             </div>
             <div className='w-full h-[9px] relative'>
-              <span className='absolute w-[30px] top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%] text-center text-white'>
-                E
-              </span>
+              <span className={noteIndicatorStyles}>E</span>
             </div>
           </div>
-          <div className='pl-[90px] pr-[15px] h-full w-full flex flex-col justify-around items-center align-middle absolute'>
-            <div className='w-full flex flex-row align-middle justify-between'>
+          <div className={cn('pl-[90px] pr-[15px] h-full w-full absolute', colMiddleCenter)}>
+            <div className={pitchContainerStyles}>
               {pitch.G.map((note, index) => (
-                <div key={index} className='w-[50px] relative'>
-                  <span className='text-white absolute top-0 left-0'>{note.localization}</span>
+                <div key={index} className={noteContainerStyles}>
+                  <span className={noteStyles}>{note.localization}</span>
                 </div>
               ))}
             </div>
-            <div className='w-full flex flex-row align-middle justify-between'>
+            <div className={pitchContainerStyles}>
               {pitch.D.map((note, index) => (
-                <div key={index} className='w-[50px] relative'>
-                  <span className='text-white absolute top-0 left-0'>{note.localization}</span>
+                <div key={index} className={noteContainerStyles}>
+                  <span className={noteStyles}>{note.localization}</span>
                 </div>
               ))}
             </div>
-            <div className='w-full flex flex-row align-middle justify-between'>
+            <div className={pitchContainerStyles}>
               {pitch.A.map((note, index) => (
-                <div key={index} className='w-[50px] relative'>
-                  <span className='text-white absolute top-0 left-0'>{note.localization}</span>
+                <div key={index} className={noteContainerStyles}>
+                  <span className={noteStyles}>{note.localization}</span>
                 </div>
               ))}
             </div>
-            <div className='w-full flex flex-row align-middle justify-between'>
+            <div className={pitchContainerStyles}>
               {pitch.E.map((note, index) => (
-                <div key={index} className='w-[50px] relative'>
-                  <span className='text-white absolute top-0 left-0'>{note.localization}</span>
+                <div key={index} className={noteContainerStyles}>
+                  <span className={noteStyles}>{note.localization}</span>
                 </div>
               ))}
             </div>
