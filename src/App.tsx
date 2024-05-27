@@ -6,17 +6,20 @@ import { Pitch, fretBoard } from './utils/notes'
 function App() {
   const [currentPitch, setCurrentPitch] = useState<Pitch>('flat')
   const pitch = fretBoard[currentPitch]
+  const uniqueNoteSet = new Set<string>(
+    [...pitch.G, ...pitch.D, ...pitch.A, ...pitch.E].map((note) => note.localization)
+  )
   const noteIndicatorStyles =
     'absolute w-[30px] top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%] text-center text-white'
-  const pitchContainerStyles = 'w-full flex flex-row align-middle justify-between'
   const noteContainerStyles = 'w-[50px] relative'
   const noteStyles =
     'text-white absolute top-0 left-0 w-[50px] h-[50px] rounded-full bg-slate-500 flex justify-center items-center text-center'
   const colMiddleCenter = 'flex flex-col justify-around items-center align-middle'
+  const rowMiddleCenter = 'flex flex-row items-center align-middle justify-between'
   const pinkGradient = 'bg-gradient-to-b from-rose-300 via-rose-400 to-from-rose-300'
 
   return (
-    <>
+    <div className='w-full my-auto'>
       <button
         onClick={() => {
           setCurrentPitch(currentPitch === 'flat' ? 'sharp' : 'flat')
@@ -25,9 +28,9 @@ function App() {
       >
         {currentPitch === 'flat' ? 'Váltás föléhangoltra' : 'Váltás aláhangoltra'}
       </button>
-      <div className='h-full w-full flex flex-col justify-center gap-[30px]'>
+      <div className='flex flex-col justify-center'>
         <div className={cn('pl-[90px] pr-[15px] h-[50px] w-full', colMiddleCenter)}>
-          <div className='w-full flex flex-row align-middle justify-between'>
+          <div className={cn('w-full ', rowMiddleCenter)}>
             {pitch.G.map((_, index) => {
               const order = index + 1
               const positionMarkers = [3, 5, 7, 9, 12, 15, 17, 19]
@@ -35,9 +38,9 @@ function App() {
                 <div key={index} className='w-[50px] relative'>
                   <span
                     className={cn(
-                      'text-black text-lg absolute top-0 left-0 w-[30px] h-[30px] flex justify-center items-center',
+                      'text-black text-lg w-[30px] h-[30px] flex justify-center items-center rounded-full',
                       {
-                        'text-white bg-amber-950 rounded-full': positionMarkers.includes(order),
+                        'text-white bg-amber-950': positionMarkers.includes(order),
                         'bg-violet-400': order === 12
                       }
                     )}
@@ -71,28 +74,28 @@ function App() {
             </div>
           </div>
           <div className={cn('pl-[90px] pr-[15px] h-full w-full absolute', colMiddleCenter)}>
-            <div className={pitchContainerStyles}>
+            <div className={cn('w-full ', rowMiddleCenter)}>
               {pitch.G.map((note, index) => (
                 <div key={index} className={noteContainerStyles}>
                   <span className={noteStyles}>{note.localization}</span>
                 </div>
               ))}
             </div>
-            <div className={pitchContainerStyles}>
+            <div className={cn('w-full ', rowMiddleCenter)}>
               {pitch.D.map((note, index) => (
                 <div key={index} className={noteContainerStyles}>
                   <span className={noteStyles}>{note.localization}</span>
                 </div>
               ))}
             </div>
-            <div className={pitchContainerStyles}>
+            <div className={cn('w-full ', rowMiddleCenter)}>
               {pitch.A.map((note, index) => (
                 <div key={index} className={noteContainerStyles}>
                   <span className={noteStyles}>{note.localization}</span>
                 </div>
               ))}
             </div>
-            <div className={pitchContainerStyles}>
+            <div className={cn('w-full ', rowMiddleCenter)}>
               {pitch.E.map((note, index) => (
                 <div key={index} className={noteContainerStyles}>
                   <span className={noteStyles}>{note.localization}</span>
@@ -102,7 +105,21 @@ function App() {
           </div>
         </div>
       </div>
-    </>
+      <div className={cn('mx-auto my-16 max-w-[1200px] gap-1', rowMiddleCenter)}>
+        <h2>TIPP: </h2>
+        {[...uniqueNoteSet].map((uniqueNote) => (
+          <span
+            key={uniqueNote}
+            className={cn(
+              'text-lg rounded-full w-full h-[80px] bg-violet-800 text-white',
+              colMiddleCenter
+            )}
+          >
+            {uniqueNote}
+          </span>
+        ))}
+      </div>
+    </div>
   )
 }
 
