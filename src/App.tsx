@@ -23,6 +23,7 @@ function App() {
   const [currentPitch, setCurrentPitch] = useState<Pitch>('flat')
   const [currentRandom, setCurrentRandom] = useState<Random | null>(null)
   const [guess, setGuess] = useState<string | null>(null)
+  const [fretLimit, setFretLimit] = useState<number | null>(null)
   const pitch = fretBoard[currentPitch]
   const pitchMatrix = [pitch.G, pitch.D, pitch.A, pitch.E]
   const uniqueNoteSet = new Set<string>(
@@ -31,7 +32,9 @@ function App() {
 
   function handleQuizStart() {
     const randomPitchIndex = Math.floor(Math.random() * pitchMatrix.length)
-    const randomNoteIndex = Math.floor(Math.random() * pitchMatrix[randomPitchIndex].length)
+    const randomNoteIndex = Math.floor(
+      Math.random() * (fretLimit ?? pitchMatrix[randomPitchIndex].length)
+    )
 
     setGuess(null)
     setCurrentRandom({
@@ -39,6 +42,11 @@ function App() {
       noteIndex: randomNoteIndex,
       note: pitchMatrix[randomPitchIndex][randomNoteIndex]
     })
+  }
+
+  function handleFretLimitChange(event: React.ChangeEvent<HTMLInputElement>) {
+    const fretLimit = Number(event.target.value)
+    setFretLimit(fretLimit)
   }
 
   return (
@@ -57,6 +65,16 @@ function App() {
       >
         REJTS EL EGY HANGOT!
       </button>
+      <label htmlFor='fretLimit'>Hányas bundig szeretnél játszani?</label>
+      <input
+        className='w-[70px] h-full border-slate-700 border-2 rounded-md p-2 m-3'
+        type='number'
+        name='fretLimit'
+        id='fretLimit'
+        min={1}
+        max={20}
+        onChange={handleFretLimitChange}
+      />
       <div className='flex flex-col justify-center'>
         <div className={cn('pl-[90px] pr-[15px] h-[50px] w-full', colMiddleCenter)}>
           <div className={cn('w-full ', rowMiddleCenter)}>
@@ -114,7 +132,13 @@ function App() {
                         noteIndex === currentRandom?.noteIndex
                     })}
                   >
-                    <span className={noteStyles}>{note.localization}</span>
+                    <span
+                      className={cn(noteStyles, {
+                        'text-opacity-0': fretLimit && fretLimit > noteIndex
+                      })}
+                    >
+                      {note.localization}
+                    </span>
                   </div>
                 ))}
               </div>
