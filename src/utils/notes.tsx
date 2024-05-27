@@ -1,6 +1,6 @@
 export type Pitch = 'flat' | 'sharp'
 type BassString = 'G' | 'D' | 'A' | 'E'
-interface Note {
+export interface Note {
   note: 'A' | 'B' | 'C' | 'D' | 'E' | 'F' | 'G'
   hasModifier: boolean
   localization: string

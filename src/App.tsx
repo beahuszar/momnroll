@@ -1,22 +1,45 @@
 import cn from 'classnames'
 import { useState } from 'react'
 import './App.css'
-import { Pitch, fretBoard } from './utils/notes'
+import { Note, Pitch, fretBoard } from './utils/notes'
+
+// styles
+const noteIndicatorStyles =
+  'absolute w-[30px] top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%] text-center text-white'
+const noteContainerStyles = 'w-[50px] relative'
+const noteStyles =
+  'text-white absolute top-0 left-0 w-[50px] h-[50px] rounded-full bg-slate-500 flex justify-center items-center text-center'
+const colMiddleCenter = 'flex flex-col justify-around items-center align-middle'
+const rowMiddleCenter = 'flex flex-row items-center align-middle justify-between'
+const pinkGradient = 'bg-gradient-to-b from-rose-300 via-rose-400 to-from-rose-300'
+
+interface Random {
+  pitchIndex: number
+  noteIndex: number
+  note: Note
+}
 
 function App() {
   const [currentPitch, setCurrentPitch] = useState<Pitch>('flat')
+  const [currentRandom, setCurrentRandom] = useState<Random | null>(null)
+  const [guess, setGuess] = useState<string | null>(null)
   const pitch = fretBoard[currentPitch]
+  const pitchMatrix = [pitch.G, pitch.D, pitch.A, pitch.E]
   const uniqueNoteSet = new Set<string>(
     [...pitch.G, ...pitch.D, ...pitch.A, ...pitch.E].map((note) => note.localization)
   )
-  const noteIndicatorStyles =
-    'absolute w-[30px] top-[50%] left-[50%] translate-y-[-50%] translate-x-[-50%] text-center text-white'
-  const noteContainerStyles = 'w-[50px] relative'
-  const noteStyles =
-    'text-white absolute top-0 left-0 w-[50px] h-[50px] rounded-full bg-slate-500 flex justify-center items-center text-center'
-  const colMiddleCenter = 'flex flex-col justify-around items-center align-middle'
-  const rowMiddleCenter = 'flex flex-row items-center align-middle justify-between'
-  const pinkGradient = 'bg-gradient-to-b from-rose-300 via-rose-400 to-from-rose-300'
+
+  function handleQuizStart() {
+    const randomPitchIndex = Math.floor(Math.random() * pitchMatrix.length)
+    const randomNoteIndex = Math.floor(Math.random() * pitchMatrix[randomPitchIndex].length)
+
+    setGuess(null)
+    setCurrentRandom({
+      pitchIndex: randomPitchIndex,
+      noteIndex: randomNoteIndex,
+      note: pitchMatrix[randomPitchIndex][randomNoteIndex]
+    })
+  }
 
   return (
     <div className='w-full my-auto'>
@@ -24,9 +47,15 @@ function App() {
         onClick={() => {
           setCurrentPitch(currentPitch === 'flat' ? 'sharp' : 'flat')
         }}
-        className='bg-orange-950 text-white p-2 rounded-md m-3'
+        className='bg-orange-900 hover:bg-orange-950 text-white p-2 rounded-md m-3'
       >
         {currentPitch === 'flat' ? 'Váltás föléhangoltra' : 'Váltás aláhangoltra'}
+      </button>
+      <button
+        onClick={handleQuizStart}
+        className='bg-violet-600 hover:bg-violet-900 text-white p-2 rounded-md m-3'
+      >
+        REJTS EL EGY HANGOT!
       </button>
       <div className='flex flex-col justify-center'>
         <div className={cn('pl-[90px] pr-[15px] h-[50px] w-full', colMiddleCenter)}>
@@ -74,49 +103,44 @@ function App() {
             </div>
           </div>
           <div className={cn('pl-[90px] pr-[15px] h-full w-full absolute', colMiddleCenter)}>
-            <div className={cn('w-full ', rowMiddleCenter)}>
-              {pitch.G.map((note, index) => (
-                <div key={index} className={noteContainerStyles}>
-                  <span className={noteStyles}>{note.localization}</span>
-                </div>
-              ))}
-            </div>
-            <div className={cn('w-full ', rowMiddleCenter)}>
-              {pitch.D.map((note, index) => (
-                <div key={index} className={noteContainerStyles}>
-                  <span className={noteStyles}>{note.localization}</span>
-                </div>
-              ))}
-            </div>
-            <div className={cn('w-full ', rowMiddleCenter)}>
-              {pitch.A.map((note, index) => (
-                <div key={index} className={noteContainerStyles}>
-                  <span className={noteStyles}>{note.localization}</span>
-                </div>
-              ))}
-            </div>
-            <div className={cn('w-full ', rowMiddleCenter)}>
-              {pitch.E.map((note, index) => (
-                <div key={index} className={noteContainerStyles}>
-                  <span className={noteStyles}>{note.localization}</span>
-                </div>
-              ))}
-            </div>
+            {pitchMatrix.map((pitch, pitchIndex) => (
+              <div key={pitchIndex} className={cn('w-full ', rowMiddleCenter)}>
+                {pitch.map((note, noteIndex) => (
+                  <div
+                    key={noteIndex}
+                    className={cn(noteContainerStyles, {
+                      invisible:
+                        pitchIndex === currentRandom?.pitchIndex &&
+                        noteIndex === currentRandom?.noteIndex
+                    })}
+                  >
+                    <span className={noteStyles}>{note.localization}</span>
+                  </div>
+                ))}
+              </div>
+            ))}
           </div>
         </div>
       </div>
       <div className={cn('mx-auto my-16 max-w-[1200px] gap-1', rowMiddleCenter)}>
         <h2>TIPP: </h2>
         {[...uniqueNoteSet].map((uniqueNote) => (
-          <span
+          <button
             key={uniqueNote}
             className={cn(
-              'text-lg rounded-full w-full h-[80px] bg-violet-800 text-white',
-              colMiddleCenter
+              'text-lg rounded-full w-full h-[80px] bg-violet-600 text-white cursor-pointer hover:bg-violet-900',
+              colMiddleCenter,
+              {
+                'bg-red-400 hover:bg-red-200':
+                  guess === uniqueNote && guess !== currentRandom?.note.localization,
+                'bg-green-400 hover:bg-green-200':
+                  guess === uniqueNote && guess === currentRandom?.note.localization
+              }
             )}
+            onClick={() => setGuess(uniqueNote)}
           >
             {uniqueNote}
-          </span>
+          </button>
         ))}
       </div>
     </div>
