@@ -155,11 +155,11 @@ function App() {
               'text-lg rounded-full w-full h-[80px] bg-violet-600 text-white cursor-pointer hover:bg-violet-900',
               colMiddleCenter,
               {
-                '!bg-red-400 !hover:bg-red-200':
+                '!bg-red-400 hover:!bg-red-200':
                   guess === uniqueNote &&
                   currentRandom &&
                   guess !== currentRandom?.note.localization,
-                '!bg-green-400 !hover:bg-green-200':
+                '!bg-green-400 hover:!bg-green-200':
                   guess === uniqueNote &&
                   currentRandom &&
                   guess === currentRandom?.note.localization
