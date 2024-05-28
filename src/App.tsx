@@ -1,5 +1,5 @@
 import cn from 'classnames'
-import { useState } from 'react'
+import { useEffect, useState } from 'react'
 import './App.css'
 import { Note, Pitch, fretBoard } from './utils/notes'
 
@@ -19,16 +19,34 @@ interface Random {
   note: Note
 }
 
+interface Guess {
+  note: string
+  isCorrect: boolean
+}
+
 function App() {
   const [currentPitch, setCurrentPitch] = useState<Pitch>('flat')
   const [currentRandom, setCurrentRandom] = useState<Random | null>(null)
-  const [guess, setGuess] = useState<string | null>(null)
+  const [guess, setGuess] = useState<Guess | null>(null)
   const [fretLimit, setFretLimit] = useState<number | null>(null)
   const pitch = fretBoard[currentPitch]
   const pitchMatrix = [pitch.G, pitch.D, pitch.A, pitch.E]
-  const uniqueNoteSet = new Set<string>(
-    [...pitch.G, ...pitch.D, ...pitch.A, ...pitch.E].map((note) => note.localization)
-  )
+  const uniqueNoteSet = [
+    ...new Set<string>(
+      [...pitch.G, ...pitch.D, ...pitch.A, ...pitch.E].map((note) => note.localization)
+    )
+  ].sort()
+
+  useEffect(() => {
+    let timerId: number | undefined
+    if (guess && guess.isCorrect) {
+      timerId = setTimeout(() => {
+        handleQuizStart()
+      }, 1000)
+    }
+
+    return () => clearTimeout(timerId)
+  }, [guess])
 
   function handleQuizStart() {
     const randomPitchIndex = Math.floor(Math.random() * pitchMatrix.length)
@@ -49,15 +67,19 @@ function App() {
     setFretLimit(fretLimit)
   }
 
+  function handlePitchChange() {
+    setCurrentPitch(currentPitch === 'flat' ? 'sharp' : 'flat')
+    setGuess(null)
+    setCurrentRandom(null)
+  }
+
   return (
     <div className='w-full my-auto'>
       <button
-        onClick={() => {
-          setCurrentPitch(currentPitch === 'flat' ? 'sharp' : 'flat')
-        }}
+        onClick={handlePitchChange}
         className='bg-orange-900 hover:bg-orange-950 text-white p-2 rounded-md m-3'
       >
-        {currentPitch === 'flat' ? 'Váltás föléhangoltra' : 'Váltás aláhangoltra'}
+        {currentPitch === 'flat' ? 'Váltás aláhangoltra' : 'Váltás föléhangoltra'}
       </button>
       <button
         onClick={handleQuizStart}
@@ -148,28 +170,29 @@ function App() {
       </div>
       <div className={cn('mx-auto my-16 max-w-[1200px] gap-1', rowMiddleCenter)}>
         <h2>TIPP: </h2>
-        {[...uniqueNoteSet].map((uniqueNote) => (
-          <button
-            key={uniqueNote}
-            className={cn(
-              'text-lg rounded-full w-full h-[80px] bg-violet-600 text-white cursor-pointer hover:bg-violet-900',
-              colMiddleCenter,
-              {
-                '!bg-red-400 hover:!bg-red-200':
-                  guess === uniqueNote &&
-                  currentRandom &&
-                  guess !== currentRandom?.note.localization,
-                '!bg-green-400 hover:!bg-green-200':
-                  guess === uniqueNote &&
-                  currentRandom &&
-                  guess === currentRandom?.note.localization
-              }
-            )}
-            onClick={() => setGuess(uniqueNote)}
-          >
-            {uniqueNote}
-          </button>
-        ))}
+        {uniqueNoteSet.map((uniqueNote) => {
+          const isQuizActive = currentRandom !== null
+          const isCurrentGuess = guess?.note === uniqueNote
+          const isCorrectGuess = currentRandom?.note.localization === uniqueNote
+          return (
+            <button
+              key={uniqueNote}
+              className={cn(
+                'text-lg rounded-full w-full h-[80px] bg-violet-600 text-white cursor-pointer hover:bg-violet-900',
+                colMiddleCenter,
+                {
+                  '!bg-red-400 hover:!bg-red-200':
+                    isQuizActive && isCurrentGuess && !isCorrectGuess,
+                  '!bg-green-400 hover:!bg-green-200':
+                    isQuizActive && isCurrentGuess && isCorrectGuess
+                }
+              )}
+              onClick={() => setGuess({ note: uniqueNote, isCorrect: isCorrectGuess })}
+            >
+              {uniqueNote}
+            </button>
+          )
+        })}
       </div>
     </div>
   )
