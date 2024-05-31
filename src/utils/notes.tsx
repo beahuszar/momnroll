@@ -12,6 +12,7 @@ type FretBoard = {
 
 // TODO: separate localization from note
 export const fretBoard: FretBoard = {
+  // B
   flat: {
     G: [
       { note: 'A', hasModifier: true, localization: 'Asz' },
@@ -102,6 +103,7 @@ export const fretBoard: FretBoard = {
       { note: 'C', hasModifier: false, localization: 'C' }
     ]
   },
+  // #
   sharp: {
     G: [
       { note: 'G', hasModifier: true, localization: 'Gisz' },
@@ -192,4 +194,9 @@ export const fretBoard: FretBoard = {
       { note: 'C', hasModifier: false, localization: 'C (Hisz)' }
     ]
   }
+}
+
+export const uniqueNotes = {
+  flat: ['C', 'Desz', 'D', 'Esz', 'E (Fesz)', 'F', 'Gesz', 'G', 'Asz', 'A', 'Bé', 'H (Cesz)'],
+  sharp: ['C (Hisz)', 'Cisz', 'D', 'Disz', 'E', 'F (Eisz)', 'Fisz', 'G', 'Gisz', 'A', 'Aisz', 'H']
 }

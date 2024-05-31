@@ -1,7 +1,7 @@
 import cn from 'classnames'
 import { useEffect, useState } from 'react'
 import './App.css'
-import { Note, Pitch, fretBoard } from './utils/notes'
+import { Note, Pitch, fretBoard, uniqueNotes } from './utils/notes'
 
 // styles
 const noteIndicatorStyles =
@@ -31,11 +31,6 @@ function App() {
   const [fretLimit, setFretLimit] = useState<number | null>(null)
   const pitch = fretBoard[currentPitch]
   const pitchMatrix = [pitch.G, pitch.D, pitch.A, pitch.E]
-  const uniqueNoteSet = [
-    ...new Set<string>(
-      [...pitch.G, ...pitch.D, ...pitch.A, ...pitch.E].map((note) => note.localization)
-    )
-  ].sort()
 
   useEffect(() => {
     let timerId: number | undefined
@@ -79,7 +74,7 @@ function App() {
         onClick={handlePitchChange}
         className='bg-orange-900 hover:bg-orange-950 text-white p-2 rounded-md m-3'
       >
-        {currentPitch === 'flat' ? 'Váltás aláhangoltra' : 'Váltás föléhangoltra'}
+        Váltás {currentPitch === 'flat' ? ' b' : ' #'}
       </button>
       <button
         onClick={handleQuizStart}
@@ -170,15 +165,15 @@ function App() {
       </div>
       <div className={cn('mx-auto my-16 max-w-[1200px] gap-1', rowMiddleCenter)}>
         <h2>TIPP: </h2>
-        {uniqueNoteSet.map((uniqueNote) => {
+        {uniqueNotes[currentPitch].map((note) => {
           const isQuizActive = currentRandom !== null
-          const isCurrentGuess = guess?.note === uniqueNote
-          const isCorrectGuess = currentRandom?.note.localization === uniqueNote
+          const isCurrentGuess = guess?.note === note
+          const isCorrectGuess = currentRandom?.note.localization === note
           return (
             <button
-              key={uniqueNote}
+              key={note}
               className={cn(
-                'text-lg rounded-full w-full h-[80px] bg-violet-600 text-white cursor-pointer hover:bg-violet-900',
+                'text-lg rounded-full w-[80px] h-[80px] bg-violet-600 text-white cursor-pointer hover:bg-violet-900',
                 colMiddleCenter,
                 {
                   '!bg-red-400 hover:!bg-red-200':
@@ -187,9 +182,9 @@ function App() {
                     isQuizActive && isCurrentGuess && isCorrectGuess
                 }
               )}
-              onClick={() => setGuess({ note: uniqueNote, isCorrect: isCorrectGuess })}
+              onClick={() => setGuess({ note: note, isCorrect: isCorrectGuess })}
             >
-              {uniqueNote}
+              {note}
             </button>
           )
         })}
